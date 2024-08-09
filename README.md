@@ -1,100 +1,41 @@
-# Tech Challenge
+# Organização do Projeto de Sistema de Pagamento
 
-## O Problema
+Este repositório contém o código-fonte e a documentação do nosso sistema de pagamento. Abaixo, você encontrará as informações necessárias sobre a arquitetura do sistema, a justificativa para as escolhas de design, e os artefatos relacionados.
 
-Há uma lanchonete de bairro que está expandindo devido seu grande sucesso. Porém, com a expansão e sem um sistema de controle de pedidos, o atendimento aos clientes pode ser caótico e confuso. Por exemplo, imagine que um cliente faça um pedido complexo, como um hambúrguer personalizado com ingredientes específicos, acompanhado de batatas fritas e uma bebida. O atendente pode anotar o pedido em um papel e entregá-lo à cozinha, mas não há garantia de que o pedido será preparado corretamente.
+## Arquitetura do Sistema
 
-Sem um sistema de controle de pedidos, pode haver confusão entre os atendentes e a cozinha, resultando em atrasos na preparação e entrega dos pedidos. Os pedidos podem ser perdidos, mal interpretados ou esquecidos, levando a insatisfação dos clientes e a perda de negócios.
+O sistema de pagamento foi desenvolvido utilizando uma arquitetura baseada em microserviços, com cada serviço responsável por uma parte específica do fluxo de pagamento. A comunicação entre os serviços é feita de maneira assíncrona, utilizando eventos para garantir que cada serviço opere de forma independente e com baixo acoplamento.
 
-Em resumo, um sistema de controle de pedidos é essencial para garantir que a lanchonete possa atender os clientes de maneira eficiente e eficaz, gerenciando seus pedidos e estoques de forma adequada. Sem ele, expandir a lanchonete pode acabar, resultando em clientes insatisfeitos e impactando os negócios de forma negativa.
+![Arquitetura do Sistema](./arquitetura_screenshot.png)
 
-Para solucionar o problema, a lanchonete irá investir em um sistema de autoatendimento de fast food, que é composto por uma série de dispositivos e interfaces que permitem aos clientes selecionar e fazer pedidos sem precisar interagir com um atendente, com as seguintes funcionalidades:
+## Justificativa do Padrão SAGA Coreografado Escolhido
 
-**Pedido:** Os clientes são apresentados a uma interface de seleção na qual podem optar por se identificarem via CPF, se cadastrarem com nome, e-mail e CPF ou não se identificar, podendo montar o combo na seguinte sequência, sendo todas elas opcionais:
+Em um sistema de pagamento pequeno com um único fluxo compensatório, optar por uma saga coreografada em vez de uma orquestrada é mais vantajoso devido à simplicidade e à menor sobrecarga operacional. A coreografia permite que cada serviço conheça apenas seus próprios passos e eventos, resultando em uma implementação e manutenção mais simples. Além disso, os serviços são mais desacoplados, facilitando a escalabilidade e a modificação de componentes individuais sem impactar o sistema como um todo.
 
-    1. Lanche 
-    2. Acompanhamento
-    3. Bebida
+Por outro lado, a orquestração requer um orquestrador central para gerenciar o fluxo de trabalho, o que adiciona complexidade desnecessária em sistemas pequenos e aumenta o acoplamento entre os serviços. Portanto, a coreografia é a escolha mais adequada para manter a simplicidade, reduzir a sobrecarga e promover o desacoplamento em um sistema de pagamento de menor escala.
 
-Em cada etapa é exibido o nome, descrição e preço de cada produto.
+## Relatório RIPD
 
-**Pagamento:** O sistema deverá possuir uma opção de pagamento integrada, no caso, para MVP, a forma de pagamento oferecida será via QRCode do Mercado Pago.
+O relatório RIPD do sistema está disponível como um arquivo PDF na mesma pasta deste README.
 
-**Acompanhamento:** Uma vez que o pedido é confirmado e pago, ele é enviado para a cozinha para ser preparado. Simultaneamente deve aparecer em um monitor para o cliente acompanhar o progresso do seu pedido com as seguintes etapas:
+[Baixar Relatório RIPD](./relatorio_ripd.pdf)
 
-    - Recebido
-    - Em preparação
-    - Pronto
-    - Finalizado
+## Vídeo Explicativo
 
-**Entrega:** Quando o pedido estiver pronto, o sistema deverá notificar o cliente que ele está pronto para retirada. Ao ser retirado, o pedido deve ser atualizado para o status finalizado.
+Para uma visão mais detalhada sobre a arquitetura e o funcionamento do sistema, assista ao vídeo no YouTube, onde explicamos o projeto e demonstramos o sistema em execução.
 
+[Assista ao Vídeo no YouTube](https://youtu.be/1NHPQKzs6dc)
 
-Além das etapas do cliente, o estabelecimento precisa de um acesso administrativo:
+## Como Executar o Projeto
 
-**Gerenciar clientes:** Com a identificação dos clientes o estabelecimento pode trabalhar em campanhas promocionais.
+Instruções para configurar e executar o sistema estão detalhadas no README de cada repositório. Abaixo estão os links para os repositórios individuais:
 
-**Gerenciar produtos e categorias:** Os produtos dispostos para escolha do cliente serão gerenciados pelo estabelecimento, definindo nome, categoria, preço, descrição e imagens. Para esse sistema, teremos categorias fixas:
+- [Order Service](https://github.com/postech-food-challenge/order-service)
+- [Payment Service](https://github.com/postech-food-challenge/payment-service)
+- [Product Service](https://github.com/postech-food-challenge/product-service)
+- [Kitchen Service](https://github.com/postech-food-challenge/kitchen-service)
+- [Customer Service](https://github.com/postech-food-challenge/customer-service)
 
-    - Lanche
-    - Acompanhamento
-    - Bebida
-    - Sobremesa
+---
 
-**Acompanhamento de pedidos:** Deve ser possível acompanhar os pedidos em andamento e tempo de espera de cada pedido.
-
-As informações dispostas no sistema de pedidos precisarão ser gerenciadas pelo estabelecimento através de um painel administrativo.
-
-
-## Entregáveis
-
-A rede de lanchonetes está crescendo, e com isso o sistema precisa evoluir em alguns pontos:
-
-1. Pensando em aumentar a disponibilidade da aplicação, para que seja possível processar milhares de requisições simultâneas, além de garantir a melhor experiência para a pessoa cliente, agora iremos utilizar o padrão SAGA para processar o fluxo de pagamento da aplicação.
-
-    **a.** Escolha um dos padrões apresentados em aula, implemente e justifique sua escolha na documentação (README);
-
-    **b.** Neste cenário, temos que considerar que com o pagamento aprovado o cliente deve ser avisado e a cozinha precisa receber o pedido; caso contrário, a cozinha não recebe nada e o cliente é avisado do problema;
-    
-    **c.** Utilize qualquer gerenciador de mensageria que desejar, seja disponibilizado pela cloud escolhida ou mesmo um provisionado em seu cluster.
-2. Execute a ferramenta OWASP Zap em seu projeto nos seguintes fluxos:
-
-    **a.** Listar/exibir cardápios;
-
-    **b.** Realização pedido (Checkout);
-
-    **c.** Geração do Pagamento;
-
-    **d.** Confirmação do Pagamento (Webhook);
-
-    Gere o relatório de vulnerabilidades encontradas (Zap scanning Report) e salve-o. Corrija as vulnerabilidades altas e gere um novo relatório após as correções aplicadas.
-
-3. Considerando a LGPD:
-
-    **a.** Crie o relatório de impacto dos dados pessoais (RIPD) usando o padrão disponibilizado nas aulas;
-
-    **b.** Crie uma rota/API em que o cliente consiga solicitar a exclusão ou inativação de seus dados pessoais, seja de forma lógica ou física do banco de dados utilizado. A API deverá ter os seguintes campos:
-
-    - Nome;
-
-    - Endereço;
-
-    - Número de telefone;
-
-    - Informações de Pagamento (caso seja armazenado em algum local);
-
-### Por fim, precisamos receber: 
-
-- Link do Github com todos os microsserviços desenvolvidos e a orquestração;
-- Dentro do seu código, o ReadMe deve conter:
-
-    - Instruções para rodar a sua aplicação, usando o orquestrador de container que preferir;
-    - Justificativa do padrão SAGA escolhido;
-    - Links com os relatórios dos processamentos do OWASP ZAP (antes e após a correção);
-    - Link com o relatório RIPD do sistema;
-    - Link para o desenho da arquitetura;
-    - Link para um vídeo com:
-
-        - O projeto rodando, inclusive com o padrão SAGA funcionando;
-        - Explicação do padrão SAGA escolhido e sua justificativa;
-        - Arquitetura da estrutura da nuvem e como a comunicação SAGA está montada.
+**Nota:** Este projeto foi desenvolvido como parte de uma avaliação técnica e não deve ser utilizado em ambientes de produção sem a devida revisão e adequação às necessidades específicas do caso de uso.
