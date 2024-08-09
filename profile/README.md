@@ -1,10 +1,10 @@
 # Organização do Projeto de Sistema de Pagamento
 
-Este repositório contém o código-fonte e a documentação do nosso sistema de pagamento. Abaixo, você encontrará as informações necessárias sobre a arquitetura do sistema, a justificativa para as escolhas de design, e os artefatos relacionados.
+Este repositório contém o código-fonte e a documentação do nosso sistema do que chamamos de food challenge. Abaixo, você encontrará as informações necessárias sobre a arquitetura do sistema, a justificativa para as escolhas de design, e os artefatos relacionados.
 
 ## Arquitetura do Sistema
 
-O sistema de pagamento foi desenvolvido utilizando uma arquitetura baseada em microserviços, com cada serviço responsável por uma parte específica do fluxo de pagamento. A comunicação entre os serviços é feita de maneira assíncrona, utilizando eventos para garantir que cada serviço opere de forma independente e com baixo acoplamento.
+O sistema do food challenge foi desenvolvido utilizando uma arquitetura baseada em microserviços, com cada serviço responsável por uma parte específica do fluxo de pagamento. A comunicação entre os serviços é feita de maneira assíncrona, utilizando eventos para garantir que cada serviço opere de forma independente e com baixo acoplamento.
 
 ![Arquitetura do Sistema](../arquitetura_screenshot.png)
 
